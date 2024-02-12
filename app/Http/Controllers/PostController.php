@@ -23,19 +23,28 @@ class PostController extends Controller
 
     public function create()
     {
+
+
         $usersFromDb = User::all();
         return view('posts.create', ['users' => $usersFromDb]);
     }
 
     public function store()
     {
+        request()->validate([
+            'title'=>['required', 'min:3'],
+            'description'=>['required', 'min:5'],
+            'post_creator'=>['required', 'exists:users,id'],
+        ]);
         $title = request()->title;
         $description = request()->description;
+        $post_creator = \request()->post_creator;
         $post = new Post;
 
        Post::create([
            "title"=> $title,
            "description" => $description,
+           "user_id" => $post_creator,
        ]);
         return to_route('posts.index');
     }
@@ -49,9 +58,15 @@ class PostController extends Controller
 
     public function update($postId)
     {
+        request()->validate([
+            'title'=>['required', 'min:3'],
+            'description'=>['required', 'min:5'],
+            'post_creator'=>['required', 'exists:users,id'],
+        ]);
         $oldPost = Post::find($postId);
         $oldPost->title = request()->title;
         $oldPost->description = request()->description;
+        $oldPost->user_id = request()->post_creator;
         $oldPost->save();
 
         return to_route('posts.show', $postId);

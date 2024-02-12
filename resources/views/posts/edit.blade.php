@@ -5,6 +5,15 @@
 @section('content')
 
     <div class="container mt-5">
+        @if ($errors->any())
+            <div class="alert alert-danger my-5">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form method="POST" action="{{route('posts.update' ,$post->id)}}">
             @csrf
             @method("PUT")
@@ -23,7 +32,7 @@
                 <label for="selectInput" class="mb-1">Select:</label>
                 <select name="post_creator" class="form-control mb-3" id="selectInput">
                     @foreach($users as $user)
-                        <option value="{{$user->id}}">{{$user->name}}</option>
+                        <option @selected($post->user_id == $user->id) value="{{$user->id}}">{{$user->name}}</option>
                     @endforeach
                 </select>
             </div>
